@@ -26,7 +26,7 @@ async function captureAndUpload() {
   console.log('✅ Screenshot saved.');
 
   try {
-    execSync('git add screenshot.png', { stdio: 'inherit' });
+    execSync('git add docs/screenshot.png', { stdio: 'inherit' });
     execSync('git commit -m "Auto update screenshot" || echo "no changes"', { stdio: 'inherit', shell: true });
     execSync('git push', { stdio: 'inherit' });
     console.log('✅ Uploaded to GitHub Pages.');
