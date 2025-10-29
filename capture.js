@@ -19,7 +19,7 @@ async function captureAndUpload() {
   console.log(`[${new Date().toLocaleTimeString()}] Capturing ${TARGET_URL} ...`);
   await page.goto(TARGET_URL, { waitUntil: 'networkidle2', timeout: 60000 });
   await page.screenshot({
-  path: 'screenshot.png',
+  path: 'docs/screenshot.png',
   clip: { x: 0, y: 0, width: 1920, height: 970 } // crop bottom 110px
 });
   await browser.close();
