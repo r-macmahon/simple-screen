@@ -18,13 +18,14 @@
   </style>
 </head>
 <body>
-  <img src="screenshot.png" alt="mirrored webpage">
+  <img src="https://raw.githubusercontent.com/<yourusername>/<yourrepo>/main/docs/screenshot.png" alt="mirrored webpage">
+
 <script>
   const img = document.querySelector('img');
   setInterval(() => {
     const timestamp = new Date().getTime();
     img.src = `screenshot.png?time=${timestamp}`;
-  }, 15000); // 15 seconds (same as your script update rate)
+  }, 14000); // 14s seconds (same as your script update rate)
 </script>
 
 </body>
