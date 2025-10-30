@@ -1,46 +1,48 @@
 const puppeteer = require('puppeteer');
+const fs = require('fs');
 const { execSync } = require('child_process');
+const express = require('express');
 
-// === CONFIG ===
-const TARGET_URL = 'https://antoireachtas.ie/imeachtai/'; // <-- your target website
-const VIEWPORT = { width: 1920, height: 1080 }; // adjust to your screens
-const INTERVAL_MINUTES = 0.23; //  = 14 seconds
-// ===============
+// ===== CONFIG =====
+const TARGET_URL = 'https://antoireachtas.ie/imeachtai/';     // webpage you want
+const VIEWPORT = { width: 1920, height: 1080 };
+const CROP_HEIGHT = 1;                      // crop bottom 100px
+const UPDATE_INTERVAL_MS = 15000;             // 15 seconds
+const PORT = 8080;
+// ==================
 
-async function captureAndUpload() {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
+const app = express();
+app.use(express.static('docs')); // serve your /docs folder
+app.listen(PORT, () =>
+  console.log(`✅ Local server running: http://localhost:${PORT}`)
+);
 
+async function captureAndPush() {
+  console.log(`[${new Date().toLocaleTimeString()}] Capturing ${TARGET_URL} ...`);
+  const browser = await puppeteer.launch({ headless: true });
   const page = await browser.newPage();
   await page.setViewport(VIEWPORT);
-
-  console.log(`[${new Date().toLocaleTimeString()}] Capturing ${TARGET_URL} ...`);
   await page.goto(TARGET_URL, { waitUntil: 'networkidle2', timeout: 60000 });
   await page.screenshot({
-  path: 'docs/screenshot.png',
-  clip: { x: 0, y: 0, width: 1920, height: 1080 } // crop bottom 110px
-});
+    path: 'docs/screenshot.png',
+    clip: { x: 0, y: 0, width: 1920, height: CROP_HEIGHT }
+  });
   await browser.close();
-  console.log('✅ Screenshot saved.');
+  console.log('📸 Screenshot saved locally.');
 
   try {
-    execSync('git add docs/screenshot.png', { stdio: 'inherit' });
-    execSync('git commit -m "Auto update screenshot" || echo "no changes"', { stdio: 'inherit', shell: true });
-    execSync('git push', { stdio: 'inherit' });
-    console.log('✅ Uploaded to GitHub Pages.');
+    execSync('git add docs/screenshot.png');
+    execSync(`git commit -m "Update screenshot at ${new Date().toISOString()}"`);
+    execSync('git push origin main');
+    console.log('⬆️  Pushed to GitHub.');
   } catch (err) {
-    console.error('⚠️ Git push failed or no changes:', err.message);
+    console.warn('⚠️  Git push skipped or failed (likely no changes).');
   }
 }
 
-async function runForever() {
+(async function loop() {
   while (true) {
-    await captureAndUpload();
-    console.log(`⏳ Waiting ${INTERVAL_MINUTES * 60} seconds before next capture...`);
-    await new Promise(r => setTimeout(r, INTERVAL_MINUTES * 60 * 1000));
+    await captureAndPush();
+    await new Promise(r => setTimeout(r, UPDATE_INTERVAL_MS));
   }
-}
-
-runForever();
+})();
