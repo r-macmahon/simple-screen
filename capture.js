@@ -4,7 +4,7 @@ const { execSync } = require('child_process');
 // === CONFIG ===
 const TARGET_URL = 'https://antoireachtas.ie/imeachtai/'; // <-- your target website
 const VIEWPORT = { width: 1920, height: 1080 }; // adjust to your screens
-const INTERVAL_MINUTES = 0.5; // 0.5 min = 30 seconds
+const INTERVAL_MINUTES = 0.23; //  = 14 seconds
 // ===============
 
 async function captureAndUpload() {
@@ -20,7 +20,7 @@ async function captureAndUpload() {
   await page.goto(TARGET_URL, { waitUntil: 'networkidle2', timeout: 60000 });
   await page.screenshot({
   path: 'docs/screenshot.png',
-  clip: { x: 0, y: 0, width: 1920, height: 970 } // crop bottom 110px
+  clip: { x: 0, y: 0, width: 1920, height: 1080 } // crop bottom 110px
 });
   await browser.close();
   console.log('✅ Screenshot saved.');
