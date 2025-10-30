@@ -18,13 +18,12 @@
   </style>
 </head>
 <body>
-  <img src="/docs/screenshot.png" alt="mirrored webpage">
+  <img src="C:/Users/ruair/Documents/GitHub/simple-screen/docs/screenshot.png" alt="mirrored webpage">
 <script>
-  const img = document.querySelector('img');
-  setInterval(() => {
-    const timestamp = new Date().getTime();
-    img.src = `screenshot.png?time=${timestamp}`;
-  }, 14000); // 14s seconds (same as your script update rate)
+const img = document.querySelector('img');
+setInterval(() => {
+  img.src = `screenshot.png?time=${Date.now()}`;
+}, 15000);
 </script>
 
 </body>
